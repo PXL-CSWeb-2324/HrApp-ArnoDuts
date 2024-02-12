@@ -1,5 +1,6 @@
 ﻿using HrApp.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.V4.Pages.Account.Internal;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HrApp.Controllers
@@ -31,14 +32,47 @@ namespace HrApp.Controllers
         }
 
         //TODO
+        public async Task<IActionResult> LoginUserName(LoginUserNameViewModel loginModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var identityUser = await _userManager.FindByNameAsync(loginModel.UserName);
+                if (identityUser != null)
+                {
+                    var result = await _signInManager.PasswordSignInAsync(identityUser, loginModel.Password, false, false);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+            }
+            return View();
+        }
 
         #endregion
 
         #region Login Email
 
         [HttpGet]
-        public IActionResult LoginEmail()
+        public IActionResult LoginEmail( )
         {
+            return View();
+        }
+
+        public async Task<IActionResult> LoginEmail(LoginEmailViewModel loginModel)
+        {
+            if (ModelState.IsValid)
+            {
+                var identityUser = await _userManager.FindByEmailAsync(loginModel.Email);
+                if (identityUser != null)
+                {
+                    var result = await _signInManager.PasswordSignInAsync(identityUser, loginModel.Password, false, false);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                }
+            }
             return View();
         }
 
